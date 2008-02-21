@@ -12,15 +12,6 @@ module Animoto
     end
     
     module ClassMethods
-      def load_settings!(file_path = "#{RAILS_ROOT}/config/mail_servers.yml")
-        begin
-          YAML.load_file(file_path).each { |key, value| mail_servers[key.to_sym] = value.to_options! }
-          self.smtp_settings = mail_servers[default_server]
-        rescue
-          logger.warn "=> \"#{file_path}\" not found! Using default SMTP settings (if any)."
-        end
-      end
-      
       def with_settings(name, &block)
         init_settings = self.smtp_settings
         use_server(name)
@@ -32,8 +23,16 @@ module Animoto
         @@default_server = name
         self.smtp_settings = mail_servers[@@default_server]
       end
-      
       alias_method :default_server=, :use_server
+           
+      def load_settings!(file_path = "#{RAILS_ROOT}/config/mail_servers.yml")
+        begin
+          YAML.load_file(file_path).each { |key, value| mail_servers[key.to_sym] = value.to_options! }
+          self.smtp_settings = mail_servers[default_server]
+        rescue
+          logger.warn "=> \"#{file_path}\" not found! Using default SMTP settings (if any)."
+        end
+      end
     end
   end
 end
