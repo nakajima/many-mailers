@@ -1,0 +1,1 @@
+require 'many_mailers'

@@ -1,0 +1,13 @@
+default:
+  address: mail.example.com
+  port: 25
+  domain: example.com
+  user_name: test_user
+  password: test_password
+
+internal:
+  address: internal.example.com
+  port: 25
+  domain: example.com
+  user_name: internal_test_user
+  password: internal_test_password
