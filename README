@@ -36,7 +36,7 @@ To specify the default server, do this:
 
   ActionMailer.default_server = :internal
 
-ActionMailer (and all of its subclasses, ie, your mailers) will use this
+ActionMailer::Base (and all of its subclasses, ie, your mailers) will use this
 server by default.
 
 TODO
