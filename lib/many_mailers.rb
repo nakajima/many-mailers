@@ -1,1 +1,1 @@
-require 'many_mailers/active_mailer/base'
+require 'many_mailers/action_mailer/base'
