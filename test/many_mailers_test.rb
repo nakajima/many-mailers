@@ -4,7 +4,7 @@ class ManyMailersTest < Test::Unit::TestCase
   
   def setup
     ActionMailer::Base.default_server = :default
-    ActionMailer::Base.load_settings!(File.dirname(__FILE__) + '/mail_servers.yml')
+    ActionMailer::Base.load_settings!(File.dirname(__FILE__) + '/fixtures/mail_servers.yml')
   end
   
   def test_should_load_settings_properly
