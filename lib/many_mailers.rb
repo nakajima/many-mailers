@@ -12,9 +12,9 @@ module Animoto
     module ClassMethods
       def with_settings(name, &block)
         self.class_inheritable_accessor :smtp_settings
-        self.smtp_settings = ActionMailer::Base.mail_servers[name]
+        self.smtp_settings = mail_servers[name]
         yield self
-        self.smtp_settings = ActionMailer::Base.mail_servers[:default]
+        self.smtp_settings = mail_servers[:default]
       end
            
       def load_settings!(file_path = "#{RAILS_ROOT}/config/mail_servers.yml")
