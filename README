@@ -31,10 +31,8 @@ test directory for a better example):
   |  user_name: test_user
   |  password: test_password
     
-The plugin will look for a server named "default" to use by default. 
-To specify the default server, do this: 
-
-  ActionMailer.default_server = :internal
+The plugin will look for a server named "default" to use by default. Make sure
+it exists.
 
 ActionMailer::Base (and all of its subclasses, ie, your mailers) will use this
 server by default.

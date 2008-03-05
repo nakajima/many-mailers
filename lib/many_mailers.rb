@@ -3,35 +3,27 @@ module Animoto
     def self.included(base)
       base.extend(ClassMethods)      
       base.class_eval do
-        @@mail_servers   = { }
-        @@default_server = :default
+        @@mail_servers = { }        
         cattr_accessor :mail_servers
-        cattr_reader :default_server
         load_settings!
       end
     end
     
     module ClassMethods
       def with_settings(name, &block)
-        init_settings = self.smtp_settings
-        use_server(name)
+        self.class_inheritable_accessor :smtp_settings
+        self.smtp_settings = ActionMailer::Base.mail_servers[name]
         yield self
-        self.smtp_settings = init_settings
+        self.smtp_settings = ActionMailer::Base.mail_servers[:default]
       end
-      
-      def use_server(name)
-        @@default_server = name
-        self.smtp_settings = mail_servers[@@default_server]
-      end
-      alias_method :default_server=, :use_server
            
       def load_settings!(file_path = "#{RAILS_ROOT}/config/mail_servers.yml")
-        begin
-          YAML.load_file(file_path).each { |key, value| mail_servers[key.to_sym] = value.to_options! }
-          self.smtp_settings = mail_servers[default_server]
-        rescue
-          logger.warn "=> \"#{file_path}\" not found! Using default SMTP settings (if any)."
+        YAML.load_file(file_path).each do |key, value|
+          mail_servers[key.to_sym] = value.to_options!
+          self.smtp_settings = mail_servers[:default]
         end
+        rescue
+          puts "=> \"#{file_path}\" not found! Using default SMTP settings (if any)."
       end
     end
   end
