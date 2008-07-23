@@ -13,12 +13,12 @@ module Animoto
       def with_settings(name, options={}, &block)
         self.class_inheritable_accessor :smtp_settings
         self.smtp_settings = mail_servers[name]
-        rescue_servers = [options[:retry]].flatten.reverse
+        rescue_servers = [options[:retry]].flatten
         begin
           yield self
         rescue => e
           raise e if rescue_servers.empty?
-          retry_server = rescue_servers.pop
+          retry_server = rescue_servers.shift
           with_settings(retry_server, :retry => rescue_servers, &block)          
         end
         self.smtp_settings = mail_servers[:default]
