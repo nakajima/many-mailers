@@ -10,3 +10,4 @@ end
 require 'fixtures/user_mailer'
 require 'fixtures/party_mailer'
 require 'test/unit'
+require 'mocha'

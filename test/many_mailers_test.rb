@@ -33,5 +33,12 @@ class ManyMailersTest < Test::Unit::TestCase
       assert_equal ActionMailer::Base.mail_servers[:default], PartyMailer.smtp_settings, "Changed settings globally!"
     end
   end
+  
+  def test_should_retry_with_failovers
+    UserMailer.with_settings(:internal, :retry => :default) do |mailer|
+      begin; mailer.deliver_feedback('Oh, thanks.')
+      rescue; assert_equal ActionMailer::Base.mail_servers[:default], UserMailer.smtp_settings end
+    end
+  end
 
 end
