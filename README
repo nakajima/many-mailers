@@ -10,6 +10,13 @@ Example
     mailer.deliver_notification(blah)
   end
 
+You can also specify servers to use in the event that the initially specified
+server fails:
+
+  ProjectMailer.with_settings(:internal, :retry => [:backup, :default]) do |mailer|
+    mailer.deliver_notification(blah)
+  end
+
 USE
 ===
 
