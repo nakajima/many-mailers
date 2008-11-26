@@ -1,6 +1,4 @@
 class UserMailer < ActionMailer::Base
-  self.template_root = "#{RAILS_ROOT}/views"
-
   def feedback(message)
     from       'Service <service@example.com>'
     recipients 'Feedback <feedback@example.com>'

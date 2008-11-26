@@ -1,6 +1,16 @@
-require 'abstract_unit'
+require File.join(File.dirname(__FILE__), 'abstract_unit')
+require 'mocha'
 
 class ManyMailersTest < Test::Unit::TestCase
+
+  def setup
+    # need to override a possible /config/mail_servers.yml with the test settings
+    ActionMailer::Base.load_settings!(File.join(File.dirname(__FILE__), 'fixtures/config/mail_servers.yml'))
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.perform_deliveries = true
+    ActionMailer::Base.raise_delivery_errors = true
+    ActionMailer::Base.deliveries = []
+  end
   
   def test_should_load_settings_properly
     settings = ActionMailer::Base.mail_servers[:default]
@@ -33,12 +43,26 @@ class ManyMailersTest < Test::Unit::TestCase
       assert_equal ActionMailer::Base.mail_servers[:default], PartyMailer.smtp_settings, "Changed settings globally!"
     end
   end
-  
+
   def test_should_retry_with_failovers
     UserMailer.with_settings(:internal, :retry => :default) do |mailer|
       begin; mailer.deliver_feedback('Oh, thanks.')
       rescue; assert_equal ActionMailer::Base.mail_servers[:default], UserMailer.smtp_settings end
     end
   end
-
+    
+  def test_should_retry_with_default_failovers
+    UserMailer.with_settings(:internal) do |mailer|
+      begin; mailer.deliver_feedback('Oh, thanks.')
+      rescue; assert_equal ActionMailer::Base.mail_servers[:default], UserMailer.smtp_settings end
+    end
+  end
+    
+  def test_should_handle_server_timeout
+    UserMailer.expects(:deliver_feedback).times(2).raises(Timeout::Error, 'mail server timed out').then.returns(nil)
+    UserMailer.with_settings(:default, :retry => :internal) do |mailer|
+      mailer.deliver_feedback('test message')
+      assert_equal ActionMailer::Base.mail_servers[:internal], UserMailer.smtp_settings
+    end
+  end
 end

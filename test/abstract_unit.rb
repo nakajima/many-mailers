@@ -7,7 +7,6 @@ rescue LoadError
   require 'action_mailer'
   require File.dirname(__FILE__) + '/../lib/many_mailers.rb'
 end
-require 'fixtures/user_mailer'
-require 'fixtures/party_mailer'
+require File.join(File.dirname(__FILE__), 'fixtures/user_mailer')
+require File.join(File.dirname(__FILE__), 'fixtures/party_mailer')
 require 'test/unit'
-require 'mocha'

@@ -11,12 +11,15 @@ module Animoto
     
     module ClassMethods
       def with_settings(name, options={}, &block)
+        options[:retry] ||= :default
+      
         self.class_inheritable_accessor :smtp_settings
         self.smtp_settings = mail_servers[name]
-        rescue_servers = [options[:retry]].flatten.compact
+
+        rescue_servers = Array(options[:retry])
         begin
           yield self
-        rescue => e
+        rescue Exception => e
           raise e if rescue_servers.empty?
           retry_server = rescue_servers.shift
           with_settings(retry_server, :retry => rescue_servers, &block)          
@@ -29,8 +32,8 @@ module Animoto
           mail_servers[key.to_sym] = value.to_options!
           self.smtp_settings = mail_servers[:default]
         end
-        rescue
-          puts "=> \"#{file_path}\" not found! Using default SMTP settings (if any)."
+      rescue
+        puts "=> \"#{file_path}\" not found! Using default SMTP settings (if any)."
       end
     end
   end
